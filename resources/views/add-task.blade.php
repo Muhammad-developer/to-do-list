@@ -6,7 +6,15 @@
                 <h1 class="fw-bold mb-0 fs-2">Add new Task</h1>
                 <a type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" href="{{ route('index') }}"></a>
             </div>
-
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach($errors as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <div class="modal-body p-5 pt-0">
                 <form action="{{ route('store') }}" method="POST">
                     @csrf
@@ -19,6 +27,16 @@
                         <input type="text" class="form-control rounded-3" id="description" name="description"
                                placeholder="Password" required>
                         <label for="description">description</label>
+                    </div>
+                    <div class="form-floating mb-3">
+
+                        <select class="form-select" name="task_status_id" id="statuses" required>
+                            <option value="">Выберите статус задач</option>
+                            @foreach($statuses as $status)
+                                <option value="{{ $status->id }}">{{ $status->name }}</option>
+                            @endforeach
+                        </select>
+                        <label for="statuses">Статус задач</label>
                     </div>
                     <button class="w-100 mb-2 btn btn-lg rounded-3 btn-success" type="submit">Add</button>
                 </form>

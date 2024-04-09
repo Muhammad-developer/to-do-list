@@ -20,6 +20,16 @@
                                placeholder="Password" required value="{{ $data->description }}">
                         <label for="description">description</label>
                     </div>
+                    <div class="form-floating mb-3">
+
+                        <select class="form-select" name="task_status_id" id="statuses" required>
+                            <option value="">Выберите статус задач</option>
+                            @foreach($statuses as $status)
+                                <option value="{{ $status->id }}" @if($data->task_status_id === $status->id) selected @endif>{{ $status->name }}</option>
+                            @endforeach
+                        </select>
+                        <label for="statuses">Статус задач</label>
+                    </div>
                     <button class="w-100 mb-2 btn btn-lg rounded-3 btn-success" type="submit">Save</button>
                 </form>
             </div>

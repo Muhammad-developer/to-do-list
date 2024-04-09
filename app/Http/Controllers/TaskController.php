@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\HistoryStatus;
 use App\Models\Task;
+use App\Models\TaskStatus;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -12,13 +14,15 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $data = Task::all();
-        return view('home', compact('data'));
+        $data = Task::paginate(5);
+        $statuses = TaskStatus::all();
+        return view('home', compact('data', 'statuses'));
     }
 
     public function create()
     {
-        return view('add-task');
+        $statuses = TaskStatus::all();
+        return view('add-task', compact('statuses'));
     }
 
     /**
@@ -28,12 +32,19 @@ class TaskController extends Controller
     {
         $data = $request->validate([
             'name' => ['required'],
-            'description' => ['required']
+            'description' => ['required'],
+            'task_status_id' => ['required'],
         ]);
 
-        Task::create([
+        $task = Task::create([
             'name' => $data['name'],
             'description' => $data['description'],
+            'task_status_id' => $data['task_status_id'],
+        ]);
+
+        HistoryStatus::create([
+            'task_status_id' => $data['task_status_id'],
+            'task_id' => $task->id
         ]);
         return redirect()->route('index')->with('message', 'Success');
     }
@@ -46,8 +57,19 @@ class TaskController extends Controller
         $task = Task::find($id->id);
 
         $data = empty($task) ? ['message' => '404 Not Found'] : $task;
+        $statuses = TaskStatus::all();
 
-        return view('edit-task', compact('data'));
+
+        return view('edit-task', compact('data', 'statuses'));
+    }
+
+    public function showHistory(string $id)
+    {
+        $task = Task::find($id);
+        $history = HistoryStatus::where('task_id', $id)->orderBy('id', 'desc')->get();
+//        dd($history[0]->historyStatus);
+
+        return view('history', compact('task', 'history'));
     }
 
     /**
@@ -58,14 +80,20 @@ class TaskController extends Controller
         $task = Task::find($request->id);
         $data = $request->validate([
             'name' => ['required'],
-            'description' => ['required']
+            'description' => ['required'],
+            'task_status_id' => ['required']
         ]);
 
         $task->update([
             'name' => $data['name'],
             'description' => $data['description'],
+            'task_status_id' => $data['task_status_id']
         ]);
 
+        HistoryStatus::create([
+            'task_status_id' => $request['task_status_id'],
+            'task_id' => $task->id
+        ]);
         return redirect()->route('index')->with('message', 'Success');
     }
 
@@ -75,8 +103,7 @@ class TaskController extends Controller
     public function destroy(Request $id)
     {
         Task::where('id', $id->id)->delete();
-        /*$task = Task::find($id);
-        $task->delete();*/
+
         return redirect()->route('index')->with('message', 'Success');
     }
 }

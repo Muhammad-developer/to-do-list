@@ -20,6 +20,7 @@ Route::post('/store', [TaskController::class, 'store'])->name('store');
 Route::post('/update', [TaskController::class, 'update'])->name('update');
 Route::get('/delete', [TaskController::class, 'destroy'])->name('delete');
 Route::get('/show', [TaskController::class, 'show'])->name('show');
+Route::get('/history/{id}', [TaskController::class, 'showHistory'])->name('history');
 
 Route::resources([
     '/tasks' => TaskController::class

@@ -1,5 +1,6 @@
-<link rel="stylesheet" href="../../resources/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+@extends('empty_layout')
+@section('content')
+
 <div class="container d-flex justify-content-center">
     <div class="table m-md-5 w-75">
         <h1>History</h1>
@@ -28,3 +29,4 @@
     </div>
 </div>
 
+@endsection
